@@ -6,11 +6,12 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
+  console.log('API 요청 도착:', req.method);
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: '허용되지 않는 메소드입니다.' });
     return;
   }
-
   const { title, content, grade, class: classNum, number, name } = req.body;
 
   if (!title || !content) {

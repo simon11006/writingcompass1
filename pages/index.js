@@ -68,11 +68,16 @@ export default function Home() {
         <title>글쓰기 나침반</title>
       </Head>
       <div className="container">
-        {/* 제공하신 HTML 구조를 JSX 문법에 맞게 변환하여 여기에 작성합니다 */}
-        {/* 클래스 이름은 그대로 사용하여 CSS가 적용되도록 합니다 */}
+        {/* 제공하신 HTML 코드를 JSX 문법에 맞게 변환하여 여기에 포함합니다. */}
+        {/* 클래스 이름은 그대로 사용하여 CSS가 적용되도록 합니다. */}
+        {/* 예를 들어: */}
+        <div className="title-container">
+          <h1 className="main-title">글쓰기 나침반</h1>
+          <p className="subtitle">글쓰기 능력 향상을 위한 맞춤형 분석 도우미</p>
+        </div>
+        {/* 나머지 HTML 코드도 동일하게 변환하여 포함합니다. */}
         {/* ... */}
       </div>
     </>
   );
 }
-

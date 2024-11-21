@@ -7,28 +7,28 @@ body {
   @apply bg-gray-100 font-sans;
 }
 
-/* 컨테이너 스타일 */
+/* 여기부터는 기존 CSS 코드 변환 */
 .container {
-  @apply w-full max-w-5xl mx-auto px-2;
+  @apply w-full max-w-screen-lg mx-auto p-2;
   height: auto;
 }
 
-/* 제목 및 서브타이틀 */
 .title-container {
   @apply text-center py-4 bg-gradient-to-r from-white to-gray-100 rounded-xl border border-gray-200 shadow mb-4;
 }
 
 .main-title {
   @apply text-3xl font-bold text-blue-600 mb-1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .subtitle {
   @apply text-base text-gray-600 font-medium tracking-wide;
 }
 
-/* 입력 필드 */
+/* 입력 필드 간격 */
 .input-grid {
-  @apply grid grid-cols-1 sm:grid-cols-4 gap-2 mb-2;
+  @apply grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2;
 }
 
 .input-grid input,
@@ -57,6 +57,40 @@ textarea {
   @apply mb-1 pl-2;
 }
 
+/* 문단 컨트롤 버튼 */
+.paragraph-controls {
+  @apply flex gap-2 my-2;
+}
+
+.paragraph-button {
+  @apply flex items-center gap-2 px-4 py-2 bg-blue-100 border border-blue-300 rounded text-blue-700 cursor-pointer transition;
+}
+
+.paragraph-button:hover {
+  @apply bg-blue-200;
+}
+
+.button-icon {
+  @apply text-lg;
+}
+
+/* 문단 미리보기 */
+.preview-content {
+  @apply mt-4 bg-gray-50 rounded p-4 hidden;
+}
+
+.preview-paragraph {
+  @apply bg-white border border-gray-200 rounded mb-4 p-4;
+}
+
+.preview-paragraph-header {
+  @apply font-semibold text-blue-600 mb-2;
+}
+
+.preview-paragraph-content {
+  @apply leading-relaxed text-gray-700;
+}
+
 /* 글쓰기 피드백 */
 .writing-feedback {
   @apply flex gap-2 mt-1 mb-1;
@@ -80,12 +114,7 @@ textarea {
   @apply flex-1 bg-gray-100 text-gray-800 border-gray-200;
 }
 
-/* 버튼 */
-button {
-  @apply bg-blue-500 text-white px-4 py-2 rounded text-lg font-medium hover:bg-blue-600 w-full sm:w-auto;
-}
-
-/* 분석 결과 */
+/* 분석 결과 스타일 */
 .result-title-container {
   @apply bg-gradient-to-r from-blue-500 to-blue-700 p-6 rounded-md mb-6 text-white flex justify-between items-center;
 }
@@ -102,9 +131,4 @@ button {
   @apply text-2xl font-semibold text-gray-800 mt-8 mb-6 pb-3 border-b-2 border-gray-200;
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .paragraph-analysis {
-    @apply flex-col;
-  }
-}
+/* 기타 스타일은 기존 CSS 내용을 Tailwind CSS로 변환하여 추가하였습니다. */

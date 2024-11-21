@@ -1,11 +1,24 @@
 // pages/api/analyze.js
 
-export default async function handler(req, res) {
-  const essayData = req.body;
+import { Configuration, OpenAIApi } from 'openai';
 
-  // 학생의 글을 문단별로 나누고 번호를 매기는 코드
-  const paragraphs = essayData.content.split(/\n+/).filter(p => p.trim());
-  const numberedParagraphs = paragraphs.map((p, index) => `[${index + 1}문단]\n${p}`).join('\n\n');
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY, // 환경 변수로부터 API 키를 가져옵니다.
+});
+const openai = new OpenAIApi(configuration);
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: '허용되지 않는 메소드입니다.' });
+    return;
+  }
+
+  const { title, content, grade, class: classNum, number, name } = req.body;
+
+  if (!title || !content) {
+    res.status(400).json({ error: '제목과 내용을 모두 입력해주세요.' });
+    return;
+  }
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {

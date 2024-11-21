@@ -1,13 +1,19 @@
 // pages/api/analyze.js
-import fetch from 'node-fetch';
+// Next.js에서는 node-fetch를 따로 설치할 필요 없이 fetch를 사용할 수 있습니다.
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.status(405).json({ error: '허용되지 않는 메소드입니다.' });
-    return;
+    res.setHeader('Allow', ['POST']); // 허용되는 메서드를 명시적으로 설정
+    return res.status(405).json({ error: '허용되지 않는 메소드입니다.' });
   }
 
   const essayData = req.body;
+
+  // 글자 수 계산 함수
+  function countCharacters(text) {
+    if (!text) return 0;
+    return text.replace(/\n/g, '').length;
+  }
 
   // 학생의 글을 문단별로 나누고 번호를 매기는 코드
   const paragraphs = essayData.content.split(/\n+/).filter((p) => p.trim());
@@ -15,7 +21,6 @@ export default async function handler(req, res) {
     .map((p, index) => `[${index + 1}문단]\n${p}`)
     .join('\n\n');
 
-  // 글자 수 계산
   const charCount = countCharacters(essayData.content);
 
   try {

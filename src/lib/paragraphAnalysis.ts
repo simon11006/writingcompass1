@@ -1,22 +1,30 @@
-export function analyzeParagraphs(content: string) {
-  // 문단 분리
+interface ParagraphAnalysis {
+  index: number;
+  content: string;
+  sentenceCount: number;
+  suggestions: string[];
+  needsWork: boolean;
+}
+
+interface FlowAnalysis {
+  suggestions: string[];
+  score: number;
+}
+
+export function analyzeParagraphs(content: string): ParagraphAnalysis[] {
   const paragraphs = content.split(/\n\s*\n/).filter(p => p.trim());
   
-  // 각 문단 분석
-  const analysis = paragraphs.map((paragraph, index) => {
-    // 문장 수 계산
+  return paragraphs.map((paragraph, index) => {
     const sentences = paragraph.match(/[^.!?]+[.!?](?:[\s"']|$)/g) || [];
     const sentenceCount = sentences.length;
     
-    // 문단 길이 분석
-    let suggestions = [];
+    const suggestions: string[] = [];
     if (sentenceCount > 5) {
       suggestions.push(`이 문단은 ${sentenceCount}개의 문장을 포함하고 있어요. 3-5개의 문장으로 나누면 더 읽기 좋아질 거예요.`);
     } else if (sentenceCount < 2) {
       suggestions.push('이 문단은 너무 짧아요. 다른 문단과 합치거나 내용을 더 추가해보세요.');
     }
 
-    // 시작 문장 분석
     const firstSentence = sentences[0]?.trim();
     if (firstSentence) {
       if (firstSentence.length > 50) {
@@ -35,11 +43,9 @@ export function analyzeParagraphs(content: string) {
       needsWork: suggestions.length > 0
     };
   });
-
-  return analysis;
 }
 
-export function analyzeParagraphFlow(paragraphs: string[]) {
+export function analyzeParagraphFlow(paragraphs: string[]): FlowAnalysis {
   if (paragraphs.length < 2) {
     return {
       suggestions: ['문단을 더 나눠서 작성하면 글의 구조가 더 명확해질 거예요.'],
@@ -47,16 +53,14 @@ export function analyzeParagraphFlow(paragraphs: string[]) {
     };
   }
 
-  const suggestions = [];
+  const suggestions: string[] = [];
   let score = 100;
 
-  // 도입-본론-결론 구조 확인
   if (paragraphs.length < 3) {
     suggestions.push('도입, 본론, 결론의 구조로 나누어 보면 어떨까요?');
     score -= 20;
   }
 
-  // 각 문단의 길이 균형 확인
   const avgLength = paragraphs.reduce((sum, p) => sum + p.length, 0) / paragraphs.length;
   paragraphs.forEach((p, i) => {
     if (p.length < avgLength * 0.5) {

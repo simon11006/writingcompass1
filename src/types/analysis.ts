@@ -13,14 +13,6 @@ export interface AnalysisData {
     표현성: Category;
     완성도: Category;
   };
-  paragraphs: Array<{
-    index: number;
-    content: string;
-    analysis: string;
-    goodPoints: string;
-    improvements: string;
-    suggestions: string[];
-  }>;
   statistics: {
     charCount: number;
     sentenceCount: number;

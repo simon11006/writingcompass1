@@ -1,10 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import AnalysisResult from '@/components/AnalysisResult'
-import ParagraphSuggestion from '@/components/ParagraphSuggestion'
-import TipModal from '@/components/TipModal'
-import WritingFeedback from '@/components/WritingFeedback'
 
 export default function Home() {
   // 상태 관리
@@ -14,58 +10,12 @@ export default function Home() {
   const [number, setNumber] = useState('')
   const [name, setName] = useState('')
   const [title, setTitle] = useState('')
-  const [showAnalysis, setShowAnalysis] = useState(false)
-  const [showSuggestion, setShowSuggestion] = useState(false)
-  const [showTipModal, setShowTipModal] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
 
-  // 분석 요청 처리
-  const handleAnalysis = async () => {
-    if (!title || !content) {
-      alert('제목과 내용을 모두 입력해주세요.');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4',
-          messages: [{
-            role: 'user',
-            content: `아래 제시된 글을 초등학교 5학년 학생의 수준에서 아주 자세하고 친절하게 분석해주세요:
-
-            ${content}
-
-            다음 형식으로 분석해주세요:
-
-            #전체평가
-            총평: [쉽고 자세한 설명으로 300자 이내 평가]
-
-            #평가항목
-            [논리성] (30%)
-            등급: [A+~F]
-            평가: [종합적 평가 내용을 자세하고 쉽게 설명]
-            잘된 점: [구체적 예시와 함께 설명]
-            개선점: [어떻게 하면 더 좋아질수 있는지 구체적으로 설명]`
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('API 요청 실패');
-      }
-
-      setShowAnalysis(true);
-    } catch (error) {
-      console.error('분석 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
-    }
-  }
+  // 문단 수 계산
+  const paragraphCount = content.split(/\n\s*\n/).filter(p => p.trim()).length;
+  
+  // 글자 수 계산 (줄바꿈 제외)
+  const charCount = content.replace(/\n/g, '').length;
 
   return (
     <main className="container mx-auto px-4">
@@ -127,77 +77,35 @@ export default function Home() {
             </ul>
           </div>
 
-          {/* 문단 컨트롤 버튼 */}
-          <div className="paragraph-controls">
-            <button
-              className="paragraph-button suggestion-button"
-              onClick={() => setShowSuggestion(true)}
-            >
-              <span>문단 제안하기</span>
-              <span className="button-icon">💡</span>
-            </button>
-            <button
-              className="paragraph-button preview-button"
-              onClick={() => setShowPreview(!showPreview)}
-            >
-              <span>{showPreview ? '미리보기 닫기' : '문단 미리보기'}</span>
-              <span className="button-icon">{showPreview ? '✕' : '👁️'}</span>
-            </button>
-          </div>
-
-          {/* 미리보기 영역 */}
-          {showPreview && <div id="previewContent" className="preview-content">
-            <ParagraphSuggestion
-              content={content}
-              visible={showPreview}
-              onClose={() => setShowPreview(false)}
-            />
-          </div>}
-
-          {/* 분석 결과 표시 영역 */}
-          <div id="analysisResult" className={`analysis-container ${!showAnalysis ? 'hidden' : ''}`}>
-            <AnalysisResult
-              essayData={{
-                grade,
-                class: className,
-                number,
-                name,
-                title,
-                content
-              }}
-              visible={showAnalysis}
-            />
-          </div>
-
           <div className="text-area-wrapper">
             <textarea
-              id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="이곳에 글을 작성하세요. 
 문단을 나누고 싶을 때는 Enter키를 한 번 눌러주세요."
               className="border p-2 sm:p-3 rounded w-full h-64 text-lg"
             />
-            <div className="paragraph-suggestions"></div>
           </div>
 
-          {/* 실시간 피드백 */}
-          <WritingFeedback content={content} />
+          <div className="writing-feedback">
+            <div className="char-count">
+              <span>글자수: {charCount}자</span>
+            </div>
+            <div className="paragraph-count">
+              <span>문단수: {paragraphCount}개</span>
+            </div>
+            <div className="paragraph-analysis">
+              <span>문단을 나누면 글이 더 읽기 쉬워져요.</span>
+            </div>
+          </div>
         </div>
 
-        <button
-          onClick={handleAnalysis}
+        <button 
           className="bg-blue-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded text-lg font-medium hover:bg-blue-600 w-full sm:w-auto"
         >
           분석하기
         </button>
       </div>
-
-      {/* 팁 모달 */}
-      <TipModal
-        isOpen={showTipModal}
-        onClose={() => setShowTipModal(false)}
-      />
     </main>
-  );
+  )
 }

@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import AnalysisResult from '@/components/AnalysisResult'
+import ParagraphSuggestion from '@/components/ParagraphSuggestion'
+import TipModal from '@/components/TipModal'
 
 export default function Home() {
   const [content, setContent] = useState('')
@@ -9,6 +12,25 @@ export default function Home() {
   const [number, setNumber] = useState('')
   const [name, setName] = useState('')
   const [title, setTitle] = useState('')
+  const [showAnalysis, setShowAnalysis] = useState(false)
+  const [showSuggestion, setShowSuggestion] = useState(false)
+  const [showTipModal, setShowTipModal] = useState(false)
+
+  const handleAnalysis = () => {
+    if (!title || !content) {
+      alert('제목과 내용을 모두 입력해주세요.');
+      return;
+    }
+    setShowAnalysis(true);
+  }
+
+  const countCharacters = (text: string) => {
+    if (!text) return 0;
+    return text.replace(/\n/g, '').length;
+  }
+
+  const paragraphCount = content.split(/\n\s*\n/).filter(p => p.trim()).length;
+  const charCount = countCharacters(content);
 
   return (
     <main className="container mx-auto px-4">
@@ -70,6 +92,24 @@ export default function Home() {
             </ul>
           </div>
 
+          {/* 문단 컨트롤 버튼 */}
+          <div className="paragraph-controls">
+            <button
+              className="paragraph-button"
+              onClick={() => setShowSuggestion(true)}
+            >
+              <span>문단 제안하기</span>
+              <span className="button-icon">💡</span>
+            </button>
+            <button
+              className="paragraph-button"
+              onClick={() => setShowTipModal(true)}
+            >
+              <span>문단 팁 보기</span>
+              <span className="button-icon">👁️</span>
+            </button>
+          </div>
+
           <div className="text-area-wrapper">
             <textarea
               value={content}
@@ -82,18 +122,47 @@ export default function Home() {
 
           <div className="writing-feedback">
             <div className="char-count">
-              <span>글자수: {content.length}자</span>
+              <span>글자수: {charCount}자</span>
             </div>
             <div className="paragraph-count">
-              <span>문단수: {content.split(/\n\s*\n/).filter(p => p.trim()).length}개</span>
+              <span>문단수: {paragraphCount}개</span>
             </div>
           </div>
         </div>
 
-        <button className="bg-blue-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded text-lg font-medium hover:bg-blue-600 w-full sm:w-auto">
+        <button
+          onClick={handleAnalysis}
+          className="bg-blue-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded text-lg font-medium hover:bg-blue-600 w-full sm:w-auto"
+        >
           분석하기
         </button>
       </div>
+
+      {/* 분석 결과 컴포넌트 */}
+      <AnalysisResult
+        essayData={{
+          grade,
+          class: className,
+          number,
+          name,
+          title,
+          content
+        }}
+        visible={showAnalysis}
+      />
+
+      {/* 문단 제안 컴포넌트 */}
+      <ParagraphSuggestion
+        content={content}
+        visible={showSuggestion}
+        onClose={() => setShowSuggestion(false)}
+      />
+
+      {/* 팁 모달 */}
+      <TipModal
+        isOpen={showTipModal}
+        onClose={() => setShowTipModal(false)}
+      />
     </main>
   )
 }
